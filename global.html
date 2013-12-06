@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BukkitAlert</title>
+<script type="text/javascript" charset="utf-8">
+
+var url = "http://bukkit.org/";
+var dbo_url = "http://dev.bukkit.org/";
+var badgeText = 0;
+
+var old_unreadConv = 0;
+var old_unreadAlerts = 0;
+var unreadConv = 0;
+var unreadAlerts = 0;
+var unreadDbo = 0;
+var old_unreadDbo = 0;
+
+var checkInterval = safari.extension.settings.frequency;
+var playSound = safari.extension.settings.sounds;
+var dboKey = safari.extension.settings.dboKey;
+
+setInterval(checkAlerts, checkInterval);
+
+safari.application.addEventListener("command", performCommand, false);
+safari.application.addEventListener("validate", performValidate, false);
+safari.extension.settings.addEventListener("change", settingsChanged, false);
+
+//Listeners
+
+function settingsChanged(event) {
+    switch (event.command) {
+        case "frequency":
+            checkInterval = event.newValue;
+            break;
+        case "sounds":
+            playSound = event.newValue;
+            break;
+        case "dboKey":
+            dboKey = event.newValue;
+            break;
+    }
+}
+
+function performCommand(event) {
+    switch (event.command) {
+        case "open-alerts":
+            var newTab = safari.application.activeBrowserWindow.openTab();
+            newTab.url = url;
+        break;
+    }
+}
+
+function performValidate(event) {
+    switch (event.command) {
+        case "open-alerts":
+            if ("badge" in event.target) {
+                event.target.badge = badgeText;
+            }
+        break;
+    }
+}
+
+//Functions
+
+function getYQLAddress(apikey) {
+    return "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fdev.bukkit.org%2Fhome%2Fprivate-messages%2F%3Fapi-key%3D" + apikey + "%22&format=json&callback=cbfunc";
+}
+
+function checkAlerts() {
+    if (dboKey !== "Undefined" && dboKey !== "") {
+        console.log("test");
+        var dbo_xhr = new XMLHttpRequest();
+        dbo_xhr.open('GET', getYQLAddress(dboKey), true);
+        dbo_xhr.onload = function() {
+            unreadDbo = (dbo_xhr.responseText.split("New messages").length - 1) / 2;
+        }
+        dbo_xhr.onerror = function () {
+            updateBadgeText("Error");
+        }
+        dbo_xhr.send();
+    }
+    
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', url + ".json", true);
+    xhr.onload = function () {
+        unreadAlerts = window.JSON.parse(xhr.responseText)._visitor_alertsUnread;
+        unreadConv = window.JSON.parse(xhr.responseText)._visitor_conversationsUnread;
+    }
+    xhr.onerror = function () {
+        updateBadgeText("Error");
+    }
+    xhr.send();
+    
+    if (unreadAlerts > old_unreadAlerts) {
+        old_unreadAlerts = unreadAlerts;
+        notify(unreadAlerts, unreadAlerts == 1 ? " alert" : " alerts", url + '/account/alerts');
+    }
+    
+    if (unreadConv > old_unreadConv) {
+        old_unreadConv = unreadConv;
+        notify(unreadConv, unreadConv == 1 ? " conversation" : " conversations", url + '/conversations');
+    }
+    
+    if (unreadDbo > old_unreadDbo) {
+        old_unreadDbo = unreadDbo;
+        notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + '/private-messages');
+    }
+    
+    updateBadgeText(parseInt(unreadAlerts) + parseInt(unreadConv) + parseInt(unreadDbo));
+    updateToolbarItems();
+}
+
+function updateBadgeText(text) {
+    badgeText = text;
+    updateToolbarItems();
+}
+
+function updateToolbarItems() {
+    var toolbarItems = safari.extension.toolbarItems;
+    for (var i = 0; i < toolbarItems.length; i++) {
+        if (toolbarItems[i].identifier !== "alerts") {
+            continue;
+        }
+        toolbarItems[i].validate();
+    }
+    
+    if (unreadAlerts == 0 && old_unreadAlerts > 0) {
+        old_unreadAlerts = 0;
+    }
+    if (unreadConv == 0 && old_unreadConv > 0) {
+        old_unreadConv = 0;
+    }
+    if (unreadDbo == 0 && old_unreadDbo > 0) {
+        old_unreadDbo = 0;
+    }
+}
+
+function notify(text, type, clickUrl) {
+    var n = new Notification('Attention!', {'body': 'You have ' + text + ' unread Bukkit' + type + '!', 'tag' : 'bukkitalert_alerts'});
+    n.onclick = function () {
+        this.close();
+        var newTab = safari.application.activeBrowserWindow.openTab();
+        newTab.url = clickUrl;
+    }
+    sound();
+}
+
+function displayTest(text) {
+    
+    var n = new Notification('Attention!', {'body': 'Checking FBO alerts...' + text, 'tag' : 'bukkitalert_test'});
+    n.onclick = function () {
+        this.close();
+        var newTab = safari.application.activeBrowserWindow.openTab();
+        newTab.url = url + '/conversations';
+    }
+    updateBadgeText("Testing");
+}
+
+function sound() {
+    if (playSound == "true") {
+        var sound = new Audio('solemn.mp3');
+        sound.play();
+    }
+}
+
+</script>
+</head>
+
+<body>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>DSH105</string>
+	<key>Builder Version</key>
+	<string>9537.71</string>
+	<key>CFBundleDisplayName</key>
+	<string>BukkitAlert</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.dsh105.bukkitalert</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Global Page</key>
+		<string>global.html</string>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string>open-alerts</string>
+				<key>Identifier</key>
+				<string>alerts</string>
+				<key>Image</key>
+				<string>icon.png</string>
+				<key>Label</key>
+				<string>BukkitAlert</string>
+				<key>Palette Label</key>
+				<string>BukkitAlert</string>
+				<key>Tool Tip</key>
+				<string>Go to alerts</string>
+			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict/>
+	</dict>
+	<key>Description</key>
+	<string>BukkitAlert for Safari. Original Chrome extension by hawkfalcon</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Allowed Domains</key>
+			<array>
+				<string>*.bukkit.org</string>
+			</array>
+			<key>Level</key>
+			<string>Some</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
