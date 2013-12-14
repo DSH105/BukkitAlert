@@ -103,7 +103,7 @@ function checkAlerts() {
     
     if (unreadDbo > old_unreadDbo) {
         old_unreadDbo = unreadDbo;
-        notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + '/private-messages');
+        notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + '/home/private-messages');
     }
     
     updateBadgeText(parseInt(unreadAlerts) + parseInt(unreadConv) + parseInt(unreadDbo));
