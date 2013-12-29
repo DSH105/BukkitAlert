@@ -4,7 +4,6 @@
 <title>BukkitAlert</title>
 <script type="text/javascript" charset="utf-8">
 
-var url = "http://bukkit.org/";
 var dbo_url = "http://dev.bukkit.org/";
 var badgeText = 0;
 
@@ -15,6 +14,7 @@ var unreadAlerts = 0;
 var unreadDbo = 0;
 var old_unreadDbo = 0;
 
+var toolbarLink = safari.extension.settings.toolbarLink;
 var checkInterval = safari.extension.settings.frequency;
 var playSound = safari.extension.settings.sounds;
 var dboKey = safari.extension.settings.dboKey;
@@ -38,6 +38,9 @@ function settingsChanged(event) {
         case "dboKey":
             dboKey = event.newValue;
             break;
+        case "toolbarLink":
+            toolbarLink = event.newValue;
+            break;
     }
 }
 
@@ -48,7 +51,7 @@ function performCommand(event) {
             if (unreadDbo > 0 && unreadAlerts == 0 && unreadConv == 0) {
                 newTab.url = dbo_url + 'home/private-messages';
             } else {
-                newTab.url = url;
+                newTab.url = toolbarLink;
             }
         break;
     }
@@ -85,7 +88,7 @@ function checkAlerts() {
     }
     
     xhr = new XMLHttpRequest();
-    xhr.open('GET', url + ".json", true);
+    xhr.open('GET', "http://bukkit.org/.json", true);
     xhr.onload = function () {
         unreadAlerts = window.JSON.parse(xhr.responseText)._visitor_alertsUnread;
         unreadConv = window.JSON.parse(xhr.responseText)._visitor_conversationsUnread;
@@ -97,17 +100,17 @@ function checkAlerts() {
     
     if (unreadAlerts > old_unreadAlerts) {
         old_unreadAlerts = unreadAlerts;
-        notify(unreadAlerts, unreadAlerts == 1 ? " alert" : " alerts", url + '/account/alerts');
+        notify(unreadAlerts, unreadAlerts == 1 ? " alert" : " alerts", "http://bukkit.org/account/alerts");
     }
     
     if (unreadConv > old_unreadConv) {
         old_unreadConv = unreadConv;
-        notify(unreadConv, unreadConv == 1 ? " conversation" : " conversations", url + '/conversations');
+        notify(unreadConv, unreadConv == 1 ? " conversation" : " conversations", "http://bukkit.org/conversations");
     }
     
     if (unreadDbo > old_unreadDbo) {
         old_unreadDbo = unreadDbo;
-        notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + '/home/private-messages');
+        notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + "/home/private-messages");
     }
     
     updateBadgeText(parseInt(unreadAlerts) + parseInt(unreadConv) + parseInt(unreadDbo));
@@ -147,17 +150,6 @@ function notify(text, type, clickUrl) {
         newTab.url = clickUrl;
     }
     sound();
-}
-
-function displayTest(text) {
-    
-    var n = new Notification('Attention!', {'body': 'Checking FBO alerts...' + text, 'tag' : 'bukkitalert_test'});
-    n.onclick = function () {
-        this.close();
-        var newTab = safari.application.activeBrowserWindow.openTab();
-        newTab.url = url + '/conversations';
-    }
-    updateBadgeText("Testing");
 }
 
 function sound() {
