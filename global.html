@@ -45,7 +45,11 @@ function performCommand(event) {
     switch (event.command) {
         case "open-alerts":
             var newTab = safari.application.activeBrowserWindow.openTab();
-            newTab.url = url;
+            if (unreadDbo > 0 && unreadAlerts == 0 && unreadConv == 0) {
+                newTab.url = dbo_url + 'home/private-messages';
+            } else {
+                newTab.url = url;
+            }
         break;
     }
 }
