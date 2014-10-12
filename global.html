@@ -86,7 +86,7 @@ function checkAlerts() {
         }
         dbo_xhr.send();
     }
-    
+
     xhr = new XMLHttpRequest();
     xhr.open('GET', "http://bukkit.org/.json", true);
     xhr.onload = function () {
@@ -97,22 +97,22 @@ function checkAlerts() {
         updateBadgeText("Error");
     }
     xhr.send();
-    
+
     if (unreadAlerts > old_unreadAlerts) {
         old_unreadAlerts = unreadAlerts;
         notify(unreadAlerts, unreadAlerts == 1 ? " alert" : " alerts", "http://bukkit.org/account/alerts");
     }
-    
+
     if (unreadConv > old_unreadConv) {
         old_unreadConv = unreadConv;
         notify(unreadConv, unreadConv == 1 ? " conversation" : " conversations", "http://bukkit.org/conversations");
     }
-    
+
     if (unreadDbo > old_unreadDbo) {
         old_unreadDbo = unreadDbo;
         notify(unreadDbo, "Dev PM" + (unreadDbo == 1 ? "" : "s"), dbo_url + "/home/private-messages");
     }
-    
+
     updateBadgeText(parseInt(unreadAlerts) + parseInt(unreadConv) + parseInt(unreadDbo));
     updateToolbarItems();
 }
@@ -130,7 +130,7 @@ function updateToolbarItems() {
         }
         toolbarItems[i].validate();
     }
-    
+
     if (unreadAlerts == 0 && old_unreadAlerts > 0) {
         old_unreadAlerts = 0;
     }
@@ -154,7 +154,7 @@ function notify(text, type, clickUrl) {
 
 function sound() {
     if (playSound == "true") {
-        var sound = new Audio('solemn.mp3');
+        var sound = new Audio('http://assets.dsh105.com/solemn.mp3');
         sound.play();
     }
 }
